@@ -1,0 +1,38 @@
+version: '3.4'
+
+services:
+  api:  
+    container_name: superheroes-api
+    image: salarega/superheroes-api:v1
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=mysqlDB;Database=superheroesdb;User ID=superhero-app;Password=ga-5ecret-%;
+    depends_on:
+      - db
+    networks:
+      - superhero-net
+
+   
+  db:
+    container_name: mysqlDB
+    image: salarega/superheroes-db:v1
+    volumes:
+    - superheroesdb-vol:/var/lib/mysql    
+    networks:
+    - superhero-net
+
+  server:
+    container_name: superheroes-server
+    image: salarega/superheroes-server:v1
+    ports:
+      - 80:81
+    networks:
+      - superhero-net
+    depends_on:
+      - api
+
+volumes:
+  superheroesdb-vol:
+  
+networks:
+  superhero-net:
+    driver: bridge
